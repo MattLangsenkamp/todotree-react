@@ -27,7 +27,6 @@ export function logOut() {
 
 export function signIn(accessToken, refreshToken) {
   localStorage.setItem("AccessToken", accessToken);
-  console.log("setting refresh in sign in", refreshToken);
   localStorage.setItem("RefreshToken", refreshToken);
   client.writeQuery({
     query: IS_LOGGED_IN,
@@ -37,11 +36,6 @@ export function signIn(accessToken, refreshToken) {
         !!localStorage.getItem("RefreshToken"),
     },
   });
-  console.log(
-    "just set the refreshtoken ",
-    localStorage.getItem("RefreshToken"),
-    localStorage.getItem("RefreshToken")
-  );
 }
 
 export function getUserDetails() {

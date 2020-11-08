@@ -39,9 +39,6 @@ const setTokensAfterware = new ApolloLink((operation, forward) => {
     if (refreshToken.startsWith("null,")) {
       refreshToken = refreshToken.substr(5, refreshToken.length);
     }
-    console.log("setting the refreshtoken in afterware", refreshToken);
-    //localStorage.setItem("AccessToken", accessToken);
-    //localStorage.setItem("RefreshToken", refreshToken);
     signIn(accessToken, refreshToken);
     return response;
   });
@@ -49,7 +46,6 @@ const setTokensAfterware = new ApolloLink((operation, forward) => {
 
 const authMiddleware = new ApolloLink((operation, forward) => {
   // add the authorization to the headers
-  console.log(localStorage.getItem("RefreshToken"));
   operation.setContext(({ headers = {} }) => ({
     headers: {
       ...headers,
