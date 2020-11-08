@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { TextField, Checkbox, makeStyles, IconButton } from "@material-ui/core";
-import { useMutation } from "@apollo/client";
-import { UPDATE_TODO, ADD_TODO, DELETE_TODO } from "../../api/graphql/todo";
+import { useMutation, useLazyQuery } from "@apollo/client";
+import {
+  UPDATE_TODO,
+  ADD_TODO,
+  DELETE_TODO,
+  GET_TODO,
+} from "../../api/graphql/todo";
 import ControlPoint from "@material-ui/icons/ControlPoint";
 import Edit from "@material-ui/icons/Edit";
 import Delete from "@material-ui/icons/Delete";
@@ -22,10 +27,15 @@ const useStyles = makeStyles((theme) => ({
 
 // a callback passed from the parent to the child? child calls it when it deletes itself and it removes that child from the parent?
 
-export default function Todo({ todo, startEditing = false }) {
+export default function Todo({ todo, startEditing = false, parentRefresh }) {
   const classes = useStyles();
-  const [currentText, setCurrentText] = useState(todo.text);
-  const [completed, setCompleted] = useState(todo.completed);
+
+  const [currentTodo, setCurrentTodo] = useState(todo);
+
+  const [getTodo] = useLazyQuery(GET_TODO, {
+    fetchPolicy: "network-only",
+  });
+
   const [editing, setEditing] = useState(startEditing);
   const [updateTodo] = useMutation(UPDATE_TODO);
   const [deleteTodo] = useMutation(DELETE_TODO);
@@ -47,13 +57,14 @@ export default function Todo({ todo, startEditing = false }) {
       <IconButton
         onClick={() => {
           setEditing(false);
-          updateTodo({ variables: { id: todo.id, text: currentText } });
+          updateTodo({ variables: { id: todo.id, text: currentTodo.text } });
         }}
       >
         <Save />
       </IconButton>
     );
   }
+
   const addTodoLocal = () => {
     addTodo({
       variables: {
@@ -64,21 +75,49 @@ export default function Todo({ todo, startEditing = false }) {
         parentTodoId: todo.id,
         children: [],
       },
-    }).then((res) => {
-      console.log(res);
-      window.location.reload(true);
-    });
-  };
-  const deleteTodoLocal = () => {
-    deleteTodo({ variables: { id: todo.id } });
-    window.location.reload(true);
+    })
+      .then((res) => {
+        console.log(res);
+        parentRefreshLocal();
+      })
+      .catch((err) => console.log(err));
   };
 
+  const deleteTodoLocal = () => {
+    deleteTodo({ variables: { id: todo.id } })
+      .then((res) => {
+        parentRefresh();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const parentRefreshLocal = () => {
+    getTodo({ variables: { id: currentTodo.id } });
+  };
+
+  const setCompleted = (completed) => {
+    let newTodo = { ...currentTodo };
+    newTodo.completed = completed;
+    setCurrentTodo(newTodo);
+  };
+
+  const setCurrentText = (text) => {
+    let newTodo = { ...currentTodo };
+    newTodo.text = text;
+    setCurrentTodo(newTodo);
+  };
+
+  let children;
+  if (todo.childrenObjects !== void 0) {
+    children = todo.childrenObjects.map((todo) => (
+      <Todo key={todo.id} todo={todo} parentRefresh={parentRefreshLocal} />
+    ));
+  }
   return (
     <div>
       <div className={classes.todo}>
         <Checkbox
-          checked={completed}
+          checked={currentTodo.completed}
           onChange={(e) => {
             setCompleted(e.target.checked);
             updateTodo({
@@ -87,7 +126,7 @@ export default function Todo({ todo, startEditing = false }) {
           }}
         />
         <TextField
-          value={currentText}
+          value={currentTodo.text}
           disabled={!editing}
           onChange={(e) => {
             setCurrentText(e.target.value);
@@ -101,11 +140,7 @@ export default function Todo({ todo, startEditing = false }) {
           <ControlPoint />
         </IconButton>
       </div>
-      <div className={classes.children}>
-        {todo.childrenObjects.map((todo) => (
-          <Todo key={todo.id} todo={todo} />
-        ))}
-      </div>
+      <div className={classes.children}>{children}</div>
     </div>
   );
 }
