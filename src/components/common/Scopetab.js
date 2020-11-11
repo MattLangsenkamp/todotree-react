@@ -21,6 +21,7 @@ export function Scopetab({
   scope,
   startEditing = false,
   setCur,
+  curScope,
   parentRefresh,
 }) {
   const [currentName, setCurrentName] = useState(scope.name);
@@ -62,7 +63,11 @@ export function Scopetab({
   };
 
   return (
-    <Paper className={classes.scope} onClick={() => setCur(scope.id)}>
+    <Paper
+      className={classes.scope}
+      onClick={() => setCur(scope.id)}
+      elevation={scope.id === curScope ? 5 : 1}
+    >
       <TextField
         value={currentName}
         disabled={!editing}

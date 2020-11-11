@@ -17,7 +17,6 @@ export default function Todoharness({ scopeId, userId }) {
   const { data, loading, error } = useQuery(GET_TODOS, {
     variables: {
       rootTodo: true,
-      userId: userId,
       scopeId: scopeId,
     },
   });
@@ -26,7 +25,6 @@ export default function Todoharness({ scopeId, userId }) {
     getTodos({
       variables: {
         rootTodo: true,
-        userId: userId,
         scopeId: scopeId,
       },
     });
@@ -46,7 +44,6 @@ export default function Todoharness({ scopeId, userId }) {
         completed: false,
         rootTodo: true,
         scopeId: scopeId,
-        children: [],
       },
     }).then((res) => {
       parentRefreshLocal();

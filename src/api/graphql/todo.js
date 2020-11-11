@@ -48,8 +48,8 @@ export const GET_TODO = gql`
 `;
 
 export const GET_TODOS = gql`
-  query GetTodos($userId: String, $scopeId: String, $rootTodo: Boolean) {
-    todos(userId: $userId, scopeId: $scopeId, rootTodo: $rootTodo) {
+  query GetTodos($scopeId: String, $rootTodo: Boolean) {
+    todos(scopeId: $scopeId, rootTodo: $rootTodo) {
       ...TodoRecursive
     }
   }
@@ -62,7 +62,6 @@ export const ADD_TODO = gql`
     $completed: Boolean!
     $scopeId: String!
     $rootTodo: Boolean!
-    $children: [String!]!
     $parentTodoId: String
   ) {
     addTodo(
@@ -70,7 +69,6 @@ export const ADD_TODO = gql`
       completed: $completed
       scopeId: $scopeId
       rootTodo: $rootTodo
-      children: $children
       parentTodoId: $parentTodoId
     ) {
       ...TodoRecursive
@@ -91,7 +89,6 @@ export const DELETE_TODO = gql`
 export const UPDATE_TODO = gql`
   mutation UpdateTodo(
     $id: String!
-    $userId: String
     $text: String
     $completed: Boolean
     $scopeId: String
@@ -99,7 +96,6 @@ export const UPDATE_TODO = gql`
   ) {
     updateTodo(
       id: $id
-      userId: $userId
       text: $text
       completed: $completed
       scopeId: $scopeId

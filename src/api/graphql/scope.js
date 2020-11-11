@@ -28,8 +28,8 @@ export const GET_SCOPE = gql`
 `;
 
 export const GET_SCOPES = gql`
-  query GetScopes($userId: String!) {
-    scopes(userId: $userId) {
+  query GetScopes {
+    scopes {
       ...ScopeFields
     }
   }
@@ -38,7 +38,6 @@ export const GET_SCOPES = gql`
 
 export const ADD_SCOPE = gql`
   mutation AddScope(
-    $userId: String!
     $defaultScope: Boolean!
     $name: String!
     $description: String
@@ -46,7 +45,6 @@ export const ADD_SCOPE = gql`
     $endTime: Long
   ) {
     addScope(
-      userId: $userId
       defaultScope: $defaultScope
       name: $name
       description: $description
@@ -62,7 +60,6 @@ export const ADD_SCOPE = gql`
 export const UPDATE_SCOPE = gql`
   mutation UpdateScopes(
     $id: String!
-    $userId: String
     $defaultScope: Boolean
     $name: String
     $description: String
@@ -71,7 +68,6 @@ export const UPDATE_SCOPE = gql`
   ) {
     updateScope(
       id: $id
-      userId: $userId
       defaultScope: $defaultScope
       name: $name
       description: $description

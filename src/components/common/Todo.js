@@ -73,7 +73,6 @@ export default function Todo({ todo, startEditing = false, parentRefresh }) {
         rootTodo: false,
         scopeId: todo.scopeId,
         parentTodoId: todo.id,
-        children: [],
       },
     })
       .then((res) => {
