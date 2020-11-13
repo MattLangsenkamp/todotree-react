@@ -101,9 +101,7 @@ export default function SignIn() {
         signIn({
           variables: { email: values.email, password: values.password },
         }).then((res) => {
-          console.log("just signed in ", res);
           signInFunc(res.data.signIn.AccessToken, res.data.signIn.RefreshToken);
-          console.log("about to go to scopes");
           history.push("/scopes");
         });
       })

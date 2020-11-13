@@ -38,7 +38,7 @@ export default function Scopes() {
   const addScopeLocal = (e) => {
     addScope({
       variables: { userId: deets.key, defaultScope: false, name: "new scope!" },
-    }).then(parentRefreshLocal());
+    }).then((res) => parentRefreshLocal());
   };
 
   let todoHarness;

@@ -50,12 +50,17 @@ export default function Todoharness({ scopeId, userId }) {
     });
   };
 
+  let todos;
+  if (data.todos) {
+    todos = data.todos.map((todo) => (
+      <Todo todo={todo} key={todo.id} parentRefresh={parentRefreshLocal} />
+    ));
+  }
+
   return (
     <div className={classes.Todoharness}>
       <ControlPoint onClick={addTodoLocal}></ControlPoint>
-      {data.todos.map((todo) => (
-        <Todo todo={todo} key={todo.id} parentRefresh={parentRefreshLocal} />
-      ))}
+      {todos}
     </div>
   );
 }

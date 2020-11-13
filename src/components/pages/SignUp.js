@@ -112,7 +112,7 @@ export default function SignUp() {
           variables: { email: values.email, password: values.password },
         })
           .then(() => {
-            history.pushState("/scopes");
+            history.push("/scopes");
           })
           .catch((err) => {
             console.log(err);
