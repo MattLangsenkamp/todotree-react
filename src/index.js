@@ -15,7 +15,7 @@ import { isSignedIn, signIn } from "./api/func/auth";
 export const cache = new InMemoryCache();
 
 const httpLink = new HttpLink({
-  uri: "http://localhost:8080/graphql",
+  uri: "https://api.todotree.me",
 });
 
 const setTokensAfterware = new ApolloLink((operation, forward) => {
