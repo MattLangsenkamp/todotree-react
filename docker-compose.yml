@@ -1,13 +1,14 @@
 version: "3.3"
 
-services:
-  nginx:
-    image: mattlangsenkamp/todotree-static-server
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
+    services:
+      nginx:
+        image: mattlangsenkamp/todotree-static-server
+        restart: always
+        ports:
+          - "80:80"
+          - "443:443"
+        volumes:
+                - /etc:$HOME
     volumes:
-      - type: bind
-        source: /etc/letsencrypt/live/
-        target: /etc/letsencrypt/live/
+        nginx-certbot:
+    
