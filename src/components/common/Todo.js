@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { TextField, Checkbox, makeStyles, IconButton } from "@material-ui/core";
+import {
+  TextField,
+  Checkbox,
+  makeStyles,
+  IconButton,
+  useTheme,
+} from "@material-ui/core";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import {
   UPDATE_TODO,
@@ -23,13 +29,20 @@ const useStyles = makeStyles((theme) => ({
   children: {
     paddingLeft: theme.spacing(4),
   },
+  checkbox: {
+    color: theme.palette.primary.light,
+    "&$checked": {
+      color: theme.palette.primary.light,
+    },
+    fill: theme.palette.primary.light,
+  },
 }));
 
 // a callback passed from the parent to the child? child calls it when it deletes itself and it removes that child from the parent?
 
 export default function Todo({ todo, startEditing = false, parentRefresh }) {
   const classes = useStyles();
-
+  const theme = useTheme();
   const [currentTodo, setCurrentTodo] = useState(todo);
 
   const [getTodo] = useLazyQuery(GET_TODO, {
@@ -117,6 +130,8 @@ export default function Todo({ todo, startEditing = false, parentRefresh }) {
       <div className={classes.todo}>
         <Checkbox
           checked={currentTodo.completed}
+          className={classes.checkbox}
+          color={theme.palette.primary.light}
           onChange={(e) => {
             setCompleted(e.target.checked);
             updateTodo({
