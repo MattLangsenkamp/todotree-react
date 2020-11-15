@@ -13,9 +13,13 @@ import {
 import { isSignedIn, signIn } from "./api/func/auth";
 
 export const cache = new InMemoryCache();
-
+let api_endpoint = "https://api.todotree.me";
+if (process.env.REACT_APP_LOCAL === "local") {
+  api_endpoint = "http://localhost:8080/graphql";
+}
+console.log(api_endpoint);
 const httpLink = new HttpLink({
-  uri: "https://api.todotree.me",
+  uri: api_endpoint,
 });
 
 const setTokensAfterware = new ApolloLink((operation, forward) => {
