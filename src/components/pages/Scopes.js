@@ -24,6 +24,7 @@ export default function Scopes() {
   let deets = getUserDetails();
   const { data, loading, error } = useQuery(GET_SCOPES, {
     variables: { userId: deets.key },
+    fetchPolicy: "network-only",
   });
   const parentRefreshLocal = () => {
     getScopes({
@@ -51,18 +52,19 @@ export default function Scopes() {
   return (
     <Layout>
       <List className={classes.list}>
-        {data.scopes.map((scope) => (
-          <Scopetab
-            key={scope.id}
-            id={scope.id}
-            scope={scope}
-            setCur={setCurrentScope}
-            curScope={currentScope}
-            parentRefresh={parentRefreshLocal}
-          >
-            {scope.name}
-          </Scopetab>
-        ))}
+        {data.scopes &&
+          data.scopes.map((scope) => (
+            <Scopetab
+              key={scope.id}
+              id={scope.id}
+              scope={scope}
+              setCur={setCurrentScope}
+              curScope={currentScope}
+              parentRefresh={parentRefreshLocal}
+            >
+              {scope.name}
+            </Scopetab>
+          ))}
         <ControlPoint onClick={addScopeLocal}></ControlPoint>
       </List>
       {todoHarness}

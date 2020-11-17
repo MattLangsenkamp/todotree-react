@@ -44,8 +44,10 @@ export default function Appbar() {
   };
 
   const logout = () => {
-    logOut();
-    history.push("/signin");
+    logOut().then(() => {
+      history.push("/signin");
+      window.location.reload(true);
+    });
   };
 
   return (
@@ -57,7 +59,9 @@ export default function Appbar() {
               value="logout"
               disabled={!isSignedIn()}
               label="log out"
-              onClick={logout}
+              onClick={() => {
+                logout();
+              }}
             ></Tab>
             <Tab
               value="signin"

@@ -30,6 +30,9 @@ Todos.fragment = {
           ...SubTodoFields
           childrenObjects {
             ...SubTodoFields
+            childrenObjects {
+              ...SubTodoFields
+            }
           }
         }
       }

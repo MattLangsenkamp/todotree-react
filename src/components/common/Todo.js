@@ -1,18 +1,7 @@
 import React, { useState } from "react";
-import {
-  TextField,
-  Checkbox,
-  makeStyles,
-  IconButton,
-  useTheme,
-} from "@material-ui/core";
-import { useMutation, useLazyQuery } from "@apollo/client";
-import {
-  UPDATE_TODO,
-  ADD_TODO,
-  DELETE_TODO,
-  GET_TODO,
-} from "../../api/graphql/todo";
+import { TextField, Checkbox, makeStyles, IconButton } from "@material-ui/core";
+import { useMutation } from "@apollo/client";
+import { UPDATE_TODO, ADD_TODO, DELETE_TODO } from "../../api/graphql/todo";
 import ControlPoint from "@material-ui/icons/ControlPoint";
 import Edit from "@material-ui/icons/Edit";
 import Delete from "@material-ui/icons/Delete";
@@ -31,23 +20,16 @@ const useStyles = makeStyles((theme) => ({
   },
   checkbox: {
     color: theme.palette.primary.light,
-    "&$checked": {
-      color: theme.palette.primary.light,
-    },
+
     fill: theme.palette.primary.light,
   },
 }));
 
 // a callback passed from the parent to the child? child calls it when it deletes itself and it removes that child from the parent?
 
-export default function Todo({ todo, startEditing = false, parentRefresh }) {
+export default function Todo({ todo, startEditing = false, refetch }) {
   const classes = useStyles();
-  const theme = useTheme();
   const [currentTodo, setCurrentTodo] = useState(todo);
-
-  const [getTodo] = useLazyQuery(GET_TODO, {
-    fetchPolicy: "network-only",
-  });
 
   const [editing, setEditing] = useState(startEditing);
   const [updateTodo] = useMutation(UPDATE_TODO);
@@ -70,7 +52,11 @@ export default function Todo({ todo, startEditing = false, parentRefresh }) {
       <IconButton
         onClick={() => {
           setEditing(false);
-          updateTodo({ variables: { id: todo.id, text: currentTodo.text } });
+          updateTodo({
+            variables: { id: todo.id, text: currentTodo.text },
+          }).then((res) => {
+            setCurrentTodo(res.data.updateTodo);
+          });
         }}
       >
         <Save />
@@ -89,8 +75,13 @@ export default function Todo({ todo, startEditing = false, parentRefresh }) {
       },
     })
       .then((res) => {
-        console.log(res);
-        parentRefreshLocal();
+        let newTodo = { ...currentTodo };
+        newTodo.childrenObjects = [
+          ...newTodo.childrenObjects,
+          res.data.addTodo,
+        ];
+        newTodo.children = [...newTodo.children, res.data.addTodo.id];
+        setCurrentTodo(newTodo);
       })
       .catch((err) => console.log(err));
   };
@@ -98,13 +89,9 @@ export default function Todo({ todo, startEditing = false, parentRefresh }) {
   const deleteTodoLocal = () => {
     deleteTodo({ variables: { id: todo.id } })
       .then((res) => {
-        parentRefresh();
+        refetch();
       })
       .catch((err) => console.log(err));
-  };
-
-  const parentRefreshLocal = () => {
-    getTodo({ variables: { id: currentTodo.id } });
   };
 
   const setCompleted = (completed) => {
@@ -120,9 +107,14 @@ export default function Todo({ todo, startEditing = false, parentRefresh }) {
   };
 
   let children;
-  if (todo.childrenObjects !== void 0) {
-    children = todo.childrenObjects.map((todo) => (
-      <Todo key={todo.id} todo={todo} parentRefresh={parentRefreshLocal} />
+
+  if (
+    currentTodo !== null &&
+    currentTodo.childrenObjects !== void 0 &&
+    currentTodo.childrenObjects !== null
+  ) {
+    children = currentTodo.childrenObjects.map((todo) => (
+      <Todo key={todo.id} todo={todo} refetch={refetch} />
     ));
   }
   return (
@@ -131,7 +123,7 @@ export default function Todo({ todo, startEditing = false, parentRefresh }) {
         <Checkbox
           checked={currentTodo.completed}
           className={classes.checkbox}
-          color={theme.palette.primary.light}
+          color="primary"
           onChange={(e) => {
             setCompleted(e.target.checked);
             updateTodo({

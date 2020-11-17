@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import jwt_decode from "jwt-decode";
-import { client } from "./../../index";
+import { client, cache } from "./../../index";
 
 const IS_LOGGED_IN = gql`
   query IsUserLoggedIn {
@@ -14,7 +14,7 @@ export function isSignedIn() {
   return data.isLoggedIn;
 }
 
-export function logOut() {
+export async function logOut() {
   localStorage.removeItem("AccessToken");
   localStorage.removeItem("RefreshToken");
   client.writeQuery({
@@ -23,6 +23,8 @@ export function logOut() {
       isLoggedIn: false,
     },
   });
+  client.resetStore();
+  cache.gc();
 }
 
 export function signIn(accessToken, refreshToken) {

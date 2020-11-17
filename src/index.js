@@ -12,7 +12,15 @@ import {
 
 import { isSignedIn, signIn } from "./api/func/auth";
 
-export const cache = new InMemoryCache();
+export const cache = new InMemoryCache({
+  typePolicies: {
+    todo: {
+      // Singleton types that have no identifying field can use an empty
+      // array for their keyFields.
+      keyFields: ["id"],
+    },
+  },
+});
 let api_endpoint = "https://api.todotree.me";
 if (process.env.REACT_APP_LOCAL === "local") {
   api_endpoint = "http://localhost:8080/graphql";
