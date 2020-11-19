@@ -1,9 +1,10 @@
-import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { makeStyles } from "@material-ui/core";
 import React from "react";
-import { GET_TODOS, ADD_TODO } from "../../api/graphql/todo";
+import { GET_TODOS, ADD_TODO, GET_TODO } from "../../api/graphql/no";
 import Todo from "./Todo";
 import ControlPoint from "@material-ui/icons/ControlPoint";
+import { cache } from "../../index";
 
 const useStyles = makeStyles({
   Todoharness: {
@@ -12,26 +13,15 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Todoharness({ scopeId, userId }) {
+export default function Todoharness({ scopeId }) {
   const classes = useStyles();
-  const { data, loading, error } = useQuery(GET_TODOS, {
+  const { data, loading, error, refetch } = useQuery(GET_TODOS, {
     variables: {
       rootTodo: true,
       scopeId: scopeId,
     },
   });
 
-  const parentRefreshLocal = () => {
-    getTodos({
-      variables: {
-        rootTodo: true,
-        scopeId: scopeId,
-      },
-    });
-  };
-  const [getTodos] = useLazyQuery(GET_TODOS, {
-    fetchPolicy: "network-only",
-  });
   const [addTodo] = useMutation(ADD_TODO);
 
   if (loading) return "loading";
@@ -46,14 +36,15 @@ export default function Todoharness({ scopeId, userId }) {
         scopeId: scopeId,
       },
     }).then((res) => {
-      parentRefreshLocal();
+      refetch();
+      //cache.writeQuery({ query: GET_TODO, variables: res.data.addTodo });
     });
   };
 
   let todos;
   if (data.todos) {
     todos = data.todos.map((todo) => (
-      <Todo todo={todo} key={todo.id} parentRefresh={parentRefreshLocal} />
+      <Todo todoId={todo.id} key={todo.id} parentRefresh={refetch} />
     ));
   }
 

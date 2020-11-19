@@ -20,43 +20,22 @@ Todos.fragment = {
   `,
 };
 
-Todos.fragment = {
-  TodoRecursive: gql`
-    fragment TodoRecursive on Todo {
-      ...SubTodoFields
-      childrenObjects {
-        ...SubTodoFields
-        childrenObjects {
-          ...SubTodoFields
-          childrenObjects {
-            ...SubTodoFields
-            childrenObjects {
-              ...SubTodoFields
-            }
-          }
-        }
-      }
-    }
-    ${Todos.fragment.SubTodoFields}
-  `,
-};
-
 export const GET_TODO = gql`
   query GetTodo($id: String!) {
     todo(id: $id) {
-      ...TodoRecursive
+      ...SubTodoFields
     }
   }
-  ${Todos.fragment.TodoRecursive}
+  ${Todos.fragment.SubTodoFields}
 `;
 
 export const GET_TODOS = gql`
   query GetTodos($scopeId: String, $rootTodo: Boolean) {
     todos(scopeId: $scopeId, rootTodo: $rootTodo) {
-      ...TodoRecursive
+      ...SubTodoFields
     }
   }
-  ${Todos.fragment.TodoRecursive}
+  ${Todos.fragment.SubTodoFields}
 `;
 
 export const ADD_TODO = gql`
@@ -74,19 +53,19 @@ export const ADD_TODO = gql`
       rootTodo: $rootTodo
       parentTodoId: $parentTodoId
     ) {
-      ...TodoRecursive
+      ...SubTodoFields
     }
   }
-  ${Todos.fragment.TodoRecursive}
+  ${Todos.fragment.SubTodoFields}
 `;
 
 export const DELETE_TODO = gql`
   mutation DeleteTodo($id: String!) {
     deleteTodo(id: $id) {
-      ...TodoRecursive
+      ...SubTodoFields
     }
   }
-  ${Todos.fragment.TodoRecursive}
+  ${Todos.fragment.SubTodoFields}
 `;
 
 export const UPDATE_TODO = gql`
@@ -104,8 +83,8 @@ export const UPDATE_TODO = gql`
       scopeId: $scopeId
       children: $children
     ) {
-      ...TodoRecursive
+      ...SubTodoFields
     }
   }
-  ${Todos.fragment.TodoRecursive}
+  ${Todos.fragment.SubTodoFields}
 `;
