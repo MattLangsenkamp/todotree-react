@@ -5,6 +5,7 @@ import { UPDATE_SCOPE, DELETE_SCOPE } from "../../api/graphql/scope";
 import Edit from "@material-ui/icons/Edit";
 import Delete from "@material-ui/icons/Delete";
 import Save from "@material-ui/icons/Save";
+import { cache } from "../..";
 
 const useStyles = makeStyles((theme) => ({
   scope: {
@@ -17,13 +18,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function Scopetab({
-  scope,
-  startEditing = false,
-  setCur,
-  curScope,
-  parentRefresh,
-}) {
+export function Scopetab({ scope, startEditing = false, setCur, curScope }) {
   const [currentName, setCurrentName] = useState(scope.name);
   const [editing, setEditing] = useState(startEditing);
   const [updateScope] = useMutation(UPDATE_SCOPE);
@@ -47,7 +42,7 @@ export function Scopetab({
       <IconButton
         onClick={() => {
           setEditing(false);
-          updateScope({ variables: { id: scope.id, name: currentName } });
+          updateScope({ variables: { id: scope.id, name: scope.name } });
         }}
       >
         <Save />
@@ -59,7 +54,11 @@ export function Scopetab({
       variables: {
         id: scope.id,
       },
-    }).then(() => parentRefresh());
+    }).then(
+      cache.evict({
+        id: scope.id,
+      })
+    );
   };
 
   return (
