@@ -29,7 +29,6 @@ export default function Scopes() {
   const [addScope] = useMutation(ADD_SCOPE);
   if (loading) return "loading";
   if (error) return "error";
-
   const addScopeLocal = () => {
     addScope({
       variables: { userId: deets.key, defaultScope: false, name: "new scope!" },

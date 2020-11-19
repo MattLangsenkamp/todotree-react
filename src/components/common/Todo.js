@@ -114,7 +114,7 @@ export default function Todo({ todoId, startEditing = false, parentRefresh }) {
     data.todo.children !== null
   ) {
     children = data.todo.children.map((child) => (
-      <Todo key={child.id} todoId={child} parentRefresh={refetch} />
+      <Todo key={child} todoId={child} parentRefresh={refetch} />
     ));
   }
 

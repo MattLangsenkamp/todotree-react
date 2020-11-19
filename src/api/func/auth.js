@@ -10,7 +10,11 @@ const IS_LOGGED_IN = gql`
 
 export function isSignedIn() {
   const data = client.readQuery({ query: IS_LOGGED_IN });
-  if (data == null) return false;
+  const option2 =
+    !!localStorage.getItem("AccessToken") &&
+    !!localStorage.getItem("RefreshToken");
+  if (data === null) return option2;
+
   return data.isLoggedIn;
 }
 
