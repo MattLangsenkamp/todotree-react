@@ -1,10 +1,9 @@
 import { useQuery, useMutation } from "@apollo/client";
 import { makeStyles } from "@material-ui/core";
 import React from "react";
-import { GET_TODOS, ADD_TODO, GET_TODO } from "../../api/graphql/no";
+import { GET_TODOS, ADD_TODO } from "../../api/graphql/no";
 import Todo from "./Todo";
 import ControlPoint from "@material-ui/icons/ControlPoint";
-import { cache } from "../../index";
 
 const useStyles = makeStyles({
   Todoharness: {
@@ -37,7 +36,6 @@ export default function Todoharness({ scopeId }) {
       },
     }).then((res) => {
       refetch();
-      //cache.writeQuery({ query: GET_TODO, variables: res.data.addTodo });
     });
   };
 

@@ -21,7 +21,7 @@ export default function Scopes() {
   const classes = useStyles();
   const [currentScope, setCurrentScope] = useState(null);
   let deets = getUserDetails();
-  const { data, loading, error } = useQuery(GET_SCOPES, {
+  const { data, loading, error, refetch } = useQuery(GET_SCOPES, {
     variables: { userId: deets.key },
     fetchPolicy: "network-only",
   });
@@ -33,12 +33,13 @@ export default function Scopes() {
   const addScopeLocal = () => {
     addScope({
       variables: { userId: deets.key, defaultScope: false, name: "new scope!" },
-    }).then((res) =>
+    }).then((res) => {
       cache.writeQuery({
-        query: "scope:" + GET_SCOPE,
+        query: GET_SCOPE,
         variables: { id: res.data.addScope.id },
-      })
-    );
+      });
+      refetch();
+    });
   };
 
   let todoHarness;
@@ -59,6 +60,7 @@ export default function Scopes() {
               scope={scope}
               setCur={setCurrentScope}
               curScope={currentScope}
+              parentRefresh={refetch}
             >
               {scope.name}
             </Scopetab>

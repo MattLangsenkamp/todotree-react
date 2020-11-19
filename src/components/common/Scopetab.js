@@ -18,7 +18,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function Scopetab({ scope, startEditing = false, setCur, curScope }) {
+export function Scopetab({
+  scope,
+  startEditing = false,
+  setCur,
+  curScope,
+  parentRefresh,
+}) {
   const [currentName, setCurrentName] = useState(scope.name);
   const [editing, setEditing] = useState(startEditing);
   const [updateScope] = useMutation(UPDATE_SCOPE);
@@ -54,11 +60,12 @@ export function Scopetab({ scope, startEditing = false, setCur, curScope }) {
       variables: {
         id: scope.id,
       },
-    }).then(
+    }).then(() => {
       cache.evict({
         id: scope.id,
-      })
-    );
+      });
+      parentRefresh();
+    });
   };
 
   return (
