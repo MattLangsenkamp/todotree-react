@@ -48,7 +48,7 @@ export function Scopetab({
       <IconButton
         onClick={() => {
           setEditing(false);
-          updateScope({ variables: { id: scope.id, name: scope.name } });
+          updateScope({ variables: { id: scope.id, name: currentName } });
         }}
       >
         <Save />
